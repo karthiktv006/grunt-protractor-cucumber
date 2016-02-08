@@ -18,5 +18,12 @@
   "bugs": {
     "url": "https://github.com/karthiktv006/grunt-protractor-cucumber/issues"
   },
-  "homepage": "https://github.com/karthiktv006/grunt-protractor-cucumber#readme"
+  "homepage": "https://github.com/karthiktv006/grunt-protractor-cucumber#readme",
+  "dependencies": {
+    "cucumber": "v0.9.4",
+    "protractor": "git+https://github.com/karthiktv006/protractor.git#redbox/v2.5.1"
+  },
+  "devDependencies": {
+    "grunt": "~0.4.1"
+  }
 }
