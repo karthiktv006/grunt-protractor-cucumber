@@ -1,6 +1,6 @@
 {
   "name": "grunt-protractor-cucumber",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Grunt runner for protractor using cucumber framework",
   "main": "Gruntfile.js",
   "scripts": {
