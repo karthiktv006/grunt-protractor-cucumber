@@ -1,29 +1,38 @@
 {
   "name": "grunt-protractor-cucumber",
-  "version": "0.0.3",
-  "description": "Grunt runner for protractor using cucumber framework",
-  "main": "Gruntfile.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "description": "The best Grunt plugin ever.",
+  "version": "0.1.0",
+  "homepage": "https://github.com/karthiktv006/grunt-protractor-cucumber",
+  "author": {
+    "name": "Karthik Viswanath",
+    "email": "karthiktv006@gmail.com"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/karthiktv006/grunt-protractor-cucumber.git"
+    "url": "https://github.com/karthiktv006/grunt-protractor-cucumber"
   },
-  "keywords": [
-    "protractor"
-  ],
-  "author": "",
-  "license": "MIT",
   "bugs": {
     "url": "https://github.com/karthiktv006/grunt-protractor-cucumber/issues"
   },
-  "homepage": "https://github.com/karthiktv006/grunt-protractor-cucumber#readme",
-  "dependencies": {
-    "cucumber": "v0.9.4",
-    "protractor": "git+https://github.com/karthiktv006/protractor.git#redbox/v2.5.1"
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "https://github.com/karthiktv006/grunt-protractor-cucumber/blob/master/LICENSE-MIT"
+    }
+  ],
+  "engines": {
+    "node": ">= 0.8.0"
+  },
+  "scripts": {
+    "test": "grunt test"
   },
   "devDependencies": {
-    "grunt": "~0.4.1"
-  }
+    "grunt-contrib-jshint": "^0.9.2",
+    "grunt-contrib-clean": "^0.5.0",
+    "grunt-contrib-nodeunit": "^0.3.3",
+    "grunt": "~0.4.5"
+  },
+  "keywords": [
+    "gruntplugin"
+  ]
 }
