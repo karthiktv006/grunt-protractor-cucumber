@@ -13,6 +13,10 @@ module.exports = function(grunt) {
   // Please see the Grunt documentation for more information regarding task
   // creation: http://gruntjs.com/creating-tasks
 
+  grunt.registerTask('e2e-run', function () {
+    console.log('grunt e2e-run');
+  });
+
   grunt.registerTask('e2e', 'Grunt plugin in progress', function() {
     console.log('e2e grunt task');
 
