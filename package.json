@@ -1,25 +1,8 @@
 {
   "name": "grunt-protractor-cucumber",
   "description": "The best Grunt plugin ever.",
-  "version": "0.1.9",
-  "homepage": "https://github.com/karthiktv006/grunt-protractor-cucumber",
-  "author": {
-    "name": "Karthik Viswanath",
-    "email": "karthiktv006@gmail.com"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/karthiktv006/grunt-protractor-cucumber"
-  },
-  "bugs": {
-    "url": "https://github.com/karthiktv006/grunt-protractor-cucumber/issues"
-  },
-  "licenses": [
-    {
-      "type": "MIT",
-      "url": "https://github.com/karthiktv006/grunt-protractor-cucumber/blob/master/LICENSE-MIT"
-    }
-  ],
+  "homepage": "https://github.com/karthiktv006/grunt-protractor-cucumber#readme",
+  "author": "Karthik Viswanath <karthiktv006@gmail.com>",
   "engines": {
     "node": ">= 0.8.0"
   },
@@ -33,9 +16,6 @@
     "yargs": "^3.32.0"
   },
   "devDependencies": {
-    "grunt-contrib-jshint": "^0.9.2",
-    "grunt-contrib-clean": "^0.5.0",
-    "grunt-contrib-nodeunit": "^0.3.3",
     "grunt": "~0.4.5"
   },
   "keywords": [
@@ -45,5 +25,15 @@
     "selenium",
     "cucumber",
     "protractor"
-  ]
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/karthiktv006/grunt-protractor-cucumber"
+  },
+  "bugs": {
+    "email": "karthiktv006@gmail.com",
+    "url": "https://github.com/karthiktv006/grunt-protractor-cucumber/issues"
+  },
+  "licenses": "MIT",
+  "version": "0.1.9"
 }
