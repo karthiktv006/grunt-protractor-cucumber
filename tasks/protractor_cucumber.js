@@ -8,108 +8,107 @@
 
 'use strict';
 
+var _ = require('lodash');
+var argv = require('yargs').argv;
+var configFile,
+    baseTestDir,
+    configuration;
+
 module.exports = function(grunt) {
 
-  // Please see the Grunt documentation for more information regarding task
-  // creation: http://gruntjs.com/creating-tasks
-
   grunt.registerTask('e2e-run', function (suite, feature, tags, browser) {
-    console.log('grunt e2e-run');
+    var outputDir = configuration.output || 'test/output',
+        featuresDir = baseTestDir + '/features';
 
-
-    if (!grunt.file.exists('test/e2e/output')) {
-      grunt.file.mkdir('test/e2e/output');
+    if (!grunt.file.exists(outputDir)) {
+      grunt.file.mkdir(outputDir);
     }
 
     if (suite) {
-      grunt.option('specs', 'test/features/' + suite + '/*.feature');
+      grunt.option('specs', featuresDir + suite + '/*.feature');
     }
     if (feature) {
-      grunt.option('specs', 'test/features/' + suite + '/' + feature);
+      grunt.option('specs', featuresDir + suite + '/' + feature);
     }
     var tags;
     if (tags) {
       tags = tags.split('&&');
     }
 
-    // if (argv.formatter) {
-    //   grunt.option('cucumberOpts.format', argv.formatter);
-    // }
+    if (argv.browserName) {
+      grunt.option('capabilities.browserName', argv.browserName);
+    } else if (browser) {
+      // try modifing the protractor config rather than using directConnect
+      grunt.option('directConnect', true);
+      grunt.option('capabilities.browserName', browser);
+    } else {
+      grunt.option('capabilities.browserName', 'chrome');
+    }
 
-    // _.forEach(argv, function(value, key) {
-    //   if (key !== '_') {
-    //     grunt.option(key, value);
-    //   }
-    // });
+    _.forEach(argv, function(value, key) {
+      if (key !== '_') {
+        grunt.option(key, value);
+      }
+    });
 
     var flags = grunt.option.flags();
-    flags.unshift('e2e.conf.js');
+    flags.unshift(configFile);
     flags.unshift('node_modules/protractor/bin/protractor');
     if (tags) {
       for (var j = 0; j < tags.length; j++) {
         flags.push('--cucumberOpts.tags=' + tags[j]);
       }
     }
-    // if (argv.browserName) {
-    //   flags.push('--cucumberOpts.no-colors');
-    // }
 
     var done = this.async();
     var ptr = grunt.util.spawn({
       cmd: 'node',
-      args: flags,
-      opts: {
-        hello: 'hello'
-      }
+      args: flags
     }, function(error, result, code) {
-      grunt.file.write('test/e2e/output/error.txt', error);
-      var regexJsonFilePath = /json file is created in (.+)\n/;
-      var outputFileMatch = result.stdout.match(regexJsonFilePath);
-      if (outputFileMatch) {
-        outputFilePath = outputFileMatch[1];
+      if (error) {
+        grunt.file.write(outputDir + '/error.txt', error);
       }
       done();
     });
+
     ptr.stdout.pipe(process.stdout);
     ptr.stderr.pipe(process.stderr);
 
+  });
 
+  grunt.registerTask('e2e-cleanup', 'Remove files from output folder', function () {
+    if (grunt.file.exists('test/output')) {
+      grunt.file.delete('test/output');
+    }
   });
 
   grunt.registerTask('e2e', 'Grunt plugin in progress', function (suite, feature, tags, browser) {
-    console.log('e2e grunt task');
-    var configFile = grunt.config.data.protractor_cucumber.options.configFile,
-        baseTestDir = grunt.config.data.protractor_cucumber.options.baseTestDir;
+    var rerunFlag = argv.rerun || argv.r,
+        taskString;
 
-    console.log(configFile, baseTestDir);
-
-    var configuration = require(process.cwd() + '/' + configFile);
-
-    var rerunFlag, taskString;
+    configFile = grunt.config.data.protractor_cucumber.options.configFile,
+    baseTestDir = grunt.config.data.protractor_cucumber.options.baseTestDir,
+    configuration = require(process.cwd() + '/' + configFile);
 
     suite = suite || '';
     feature = feature || '';
     tags = tags || '';
     browser = browser || '';
     taskString = 'e2e-run:' + suite + ':' + feature + ':' + tags + ':' + browser;
-    // rerunFlag = argv.rerun || argv.r;
 
-    // grunt.task.run('e2e-cleanup');
     grunt.task.run(taskString);
-    // if (rerunFlag) {
-    //   grunt.task.run('e2e-rerun:' + browser);
-    //   grunt.task.run('stitch-json-files');
-    // }
-    // if (argv.html) {
-    //   grunt.task.run('generateHtmlReport');
-    // }
-
+    if (rerunFlag) {
+      grunt.task.run('e2e-rerun:' + browser);
+      // grunt.task.run('stitch-json-files');
+    }
 
 
     /////////////////////////////////////////////////////////////////
     //   Below code came by default using grunt-init gruntplugin   //
     /////////////////////////////////////////////////////////////////
 
+  // Please see the Grunt documentation for more information regarding task
+  // creation: http://gruntjs.com/creating-tasks
 
     // Merge task-specific and/or target-specific options with these defaults.
     // var options = this.options({
