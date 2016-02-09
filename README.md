@@ -1,6 +1,6 @@
 # grunt-protractor-cucumber
 
-> The best Grunt plugin ever.
+> Grunt runner for protractor using cucumber framework
 
 ## Getting Started
 This plugin requires Grunt `~0.4.5`
@@ -25,65 +25,50 @@ In your project's Gruntfile, add a section named `protractor_cucumber` to the da
 ```js
 grunt.initConfig({
   protractor_cucumber: {
-    options: {
+      options: {
       // Task-specific options go here.
-    },
-    your_target: {
-      // Target-specific file lists and/or options go here.
-    },
-  },
+    }
+  }
 });
 ```
 
 ### Options
 
-#### options.separator
+#### options.configFile
 Type: `String`
-Default value: `',  '`
+Default value: `'e2e.conf.js'`
 
-A string value that is used to do something with whatever.
+A string value that is used to point the location of config file (similar pattern to protractor config)
 
-#### options.punctuation
+#### options.baseTestDir
 Type: `String`
-Default value: `'.'`
+Default value: `'test'`
 
-A string value that is used to do something else with whatever else.
+A string value that is used to locate the test directory which will be used through grunt task as base to look for specs
 
 ### Usage Examples
-
-#### Default Options
-In this example, the default options are used to do something with whatever. So if the `testing` file has the content `Testing` and the `123` file had the content `1 2 3`, the generated result would be `Testing, 1 2 3.`
-
-```js
-grunt.initConfig({
-  protractor_cucumber: {
-    options: {},
-    files: {
-      'dest/default_options': ['src/testing', 'src/123'],
-    },
-  },
-});
-```
-
 #### Custom Options
-In this example, custom options are used to do something else with whatever else. So if the `testing` file has the content `Testing` and the `123` file had the content `1 2 3`, the generated result in this case would be `Testing: 1 2 3 !!!`
+In this example, you define the location of config file and base test directory inside `grunt.initConfig` block. Rest of the configuration which are related to protractor/cucumber/app should be defined inside `e2e.conf.js` file
 
 ```js
 grunt.initConfig({
   protractor_cucumber: {
-    options: {
-      separator: ': ',
-      punctuation: ' !!!',
-    },
-    files: {
-      'dest/default_options': ['src/testing', 'src/123'],
-    },
-  },
+      options: {
+      configFile: 'e2e.conf.js',
+      baseTestDir: 'test'
+    }
+  }
 });
 ```
+
+### Execution CLI
+`grunt e2e:<folder>:<feature_name>:<tag>:<browser> --browserName=<browser_name>`
+
+#### Sample project
+Refer https://github.com/karthiktv006/grunt-protractor-cucumber-examples
 
 ## Contributing
 In lieu of a formal styleguide, take care to maintain the existing coding style. Add unit tests for any new or changed functionality. Lint and test your code using [Grunt](http://gruntjs.com/).
 
 ## Release History
-_(Nothing yet)_
+Refer https://github.com/karthiktv006/grunt-protractor-cucumber/releases
