@@ -38,8 +38,8 @@
   },
   "keywords": [
     "protractor",
-    "cucumber"
-    "selenium"
+    "cucumber",
+    "selenium",
     "angularjs",
     "angular",
     "gruntplugin"
