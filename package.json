@@ -37,6 +37,11 @@
     "grunt": "~0.4.5"
   },
   "keywords": [
+    "protractor",
+    "cucumber"
+    "selenium"
+    "angularjs",
+    "angular",
     "gruntplugin"
   ]
 }
