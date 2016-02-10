@@ -1,6 +1,6 @@
 {
   "name": "grunt-protractor-cucumber",
-  "description": "The best Grunt plugin ever.",
+  "description": "Grunt runner for protractor using cucumber framework",
   "homepage": "https://github.com/karthiktv006/grunt-protractor-cucumber#readme",
   "author": "Karthik Viswanath <karthiktv006@gmail.com>",
   "engines": {
