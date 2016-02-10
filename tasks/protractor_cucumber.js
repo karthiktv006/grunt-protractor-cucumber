@@ -77,7 +77,6 @@ module.exports = function(grunt) {
   });
 
   var protractorRunner = function (flags, done) {
-    console.log('protractorRunner');
     var ptr = grunt.util.spawn({
       cmd: 'node',
       args: flags
@@ -101,7 +100,6 @@ module.exports = function(grunt) {
     outputDir = configuration.config.report.output || 'test/output',
     featuresDir = baseTestDir + '/features';
   };
-
 
   var getFlagsForProtractor = function (suite, feature, tags, browser) {
 
@@ -137,6 +135,7 @@ module.exports = function(grunt) {
      grunt.option('capabilities.platform', argv.platform);
     }
 
+
     _.forEach(argv, function(value, key) {
       if (key !== '_') {
         grunt.option(key, value);
@@ -150,6 +149,12 @@ module.exports = function(grunt) {
       for (var j = 0; j < tags.length; j++) {
         flags.push('--cucumberOpts.tags=' + tags[j]);
       }
+    }
+
+    if (configuration.config.report) {
+      _.forEach(configuration.config.report.format, function (filename, formatType) {
+        flags.push('--cucumberOpts.format=' + formatType + ':' + outputDir + '/' + filename);
+      });
     }
 
     //TODO make no color to grunt, protractor and cucumber
