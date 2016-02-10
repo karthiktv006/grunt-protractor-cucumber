@@ -12,6 +12,7 @@ var _ = require('lodash');
 var argv = require('yargs').argv;
 var configFile,
     baseTestDir,
+    seleniumAddress,
     configuration;
 
 module.exports = function(grunt) {
@@ -37,12 +38,19 @@ module.exports = function(grunt) {
 
     if (argv.browserName) {
       grunt.option('capabilities.browserName', argv.browserName);
+      grunt.option('seleniumAddress', seleniumAddress);
     } else if (browser) {
       // try modifing the protractor config rather than using directConnect
       grunt.option('directConnect', true);
       grunt.option('capabilities.browserName', browser);
-    } else {
-      grunt.option('capabilities.browserName', 'chrome');
+    }
+
+    if (argv.seleniumAddress) {
+      grunt.option('seleniumAddress', argv.seleniumAddress);
+    }
+
+    if (argv.platform) {
+     grunt.option('capabilities.platform', argv.platform);
     }
 
     _.forEach(argv, function(value, key) {
@@ -58,6 +66,11 @@ module.exports = function(grunt) {
       for (var j = 0; j < tags.length; j++) {
         flags.push('--cucumberOpts.tags=' + tags[j]);
       }
+    }
+
+    //TODO make no color to grunt, protractor and cucumber
+    if (argv.browserName) {
+      flags.push('--cucumberOpts.no-colors');
     }
 
     var done = this.async();
@@ -88,6 +101,7 @@ module.exports = function(grunt) {
 
     configFile = grunt.config.data.protractor_cucumber.options.configFile,
     baseTestDir = grunt.config.data.protractor_cucumber.options.baseTestDir,
+    seleniumAddress = grunt.config.data.protractor_cucumber.options.seleniumAddress,
     configuration = require(process.cwd() + '/' + configFile);
 
     suite = suite || '';

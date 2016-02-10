@@ -26,7 +26,7 @@ In your project's Gruntfile, add a section named `protractor_cucumber` to the da
 grunt.initConfig({
   protractor_cucumber: {
       options: {
-      // Task-specific options go here.
+        // Task-specific options go here.
     }
   }
 });
@@ -54,8 +54,8 @@ In this example, you define the location of config file and base test directory 
 grunt.initConfig({
   protractor_cucumber: {
       options: {
-      configFile: 'e2e.conf.js',
-      baseTestDir: 'test'
+        configFile: 'e2e.conf.js',
+        baseTestDir: 'test'
     }
   }
 });
