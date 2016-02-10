@@ -17,8 +17,38 @@ var configFile,
 
 module.exports = function(grunt) {
 
-  grunt.registerTask('e2e-run', function (suite, feature, tags, browser) {
-    var outputDir = configuration.output || 'test/output',
+  grunt.registerTask('e2e', 'Grunt plugin in progress', function (suite, feature, tags, browser) {
+    var rerunFlag = argv.rerun || argv.r,
+        taskString;
+
+    configFile = grunt.config.data.protractor_cucumber.options.configFile,
+    baseTestDir = grunt.config.data.protractor_cucumber.options.baseTestDir,
+    seleniumAddress = grunt.config.data.protractor_cucumber.options.seleniumAddress,
+    configuration = require(process.cwd() + '/' + configFile);
+
+    suite = suite || '';
+    feature = feature || '';
+    tags = tags || '';
+    browser = browser || '';
+    taskString = 'e2e-run:' + suite + ':' + feature + ':' + tags + ':' + browser;
+
+    grunt.task.run(taskString);
+    if (rerunFlag) {
+      grunt.task.run('e2e-rerun:' + browser);
+      // grunt.task.run('stitch-json-files');
+    }
+
+  });
+
+  grunt.registerTask('e2e-cleanup', 'Remove files from output folder', function () {
+    if (grunt.file.exists('test/output')) {
+      grunt.file.delete('test/output');
+    }
+  });
+
+  grunt.registerTask('e2e-run', function e2eRun (suite, feature, tags, browser) {
+    // check if its defined
+    var outputDir = configuration.config.report.output || 'test/output',
         featuresDir = baseTestDir + '/features';
 
     if (!grunt.file.exists(outputDir)) {
@@ -87,74 +117,6 @@ module.exports = function(grunt) {
     ptr.stdout.pipe(process.stdout);
     ptr.stderr.pipe(process.stderr);
 
-  });
-
-  grunt.registerTask('e2e-cleanup', 'Remove files from output folder', function () {
-    if (grunt.file.exists('test/output')) {
-      grunt.file.delete('test/output');
-    }
-  });
-
-  grunt.registerTask('e2e', 'Grunt plugin in progress', function (suite, feature, tags, browser) {
-    var rerunFlag = argv.rerun || argv.r,
-        taskString;
-
-    configFile = grunt.config.data.protractor_cucumber.options.configFile,
-    baseTestDir = grunt.config.data.protractor_cucumber.options.baseTestDir,
-    seleniumAddress = grunt.config.data.protractor_cucumber.options.seleniumAddress,
-    configuration = require(process.cwd() + '/' + configFile);
-
-    suite = suite || '';
-    feature = feature || '';
-    tags = tags || '';
-    browser = browser || '';
-    taskString = 'e2e-run:' + suite + ':' + feature + ':' + tags + ':' + browser;
-
-    grunt.task.run(taskString);
-    if (rerunFlag) {
-      grunt.task.run('e2e-rerun:' + browser);
-      // grunt.task.run('stitch-json-files');
-    }
-
-
-    /////////////////////////////////////////////////////////////////
-    //   Below code came by default using grunt-init gruntplugin   //
-    /////////////////////////////////////////////////////////////////
-
-  // Please see the Grunt documentation for more information regarding task
-  // creation: http://gruntjs.com/creating-tasks
-
-    // Merge task-specific and/or target-specific options with these defaults.
-    // var options = this.options({
-    //   punctuation: '.',
-    //   separator: ', '
-    // });
-
-    // // Iterate over all specified file groups.
-    // this.files.forEach(function(f) {
-    //   // Concat specified files.
-    //   var src = f.src.filter(function(filepath) {
-    //     // Warn on and remove invalid source files (if nonull was set).
-    //     if (!grunt.file.exists(filepath)) {
-    //       grunt.log.warn('Source file "' + filepath + '" not found.');
-    //       return false;
-    //     } else {
-    //       return true;
-    //     }
-    //   }).map(function(filepath) {
-    //     // Read file source.
-    //     return grunt.file.read(filepath);
-    //   }).join(grunt.util.normalizelf(options.separator));
-
-    //   // Handle options.
-    //   src += options.punctuation;
-
-    //   // Write the destination file.
-    //   grunt.file.write(f.dest, src);
-
-    //   // Print a success message.
-    //   grunt.log.writeln('File "' + f.dest + '" created.');
-    // });
   });
 
 };

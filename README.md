@@ -61,10 +61,10 @@ grunt.initConfig({
 });
 ```
 
-### Execution CLI
+## Execution CLI
 `grunt e2e:<folder>:<feature_name>:<tag>:<browser> --browserName=<browser_name>`
 
-#### Sample project
+### Sample project
 Refer https://github.com/karthiktv006/grunt-protractor-cucumber-examples
 
 ## Contributing
