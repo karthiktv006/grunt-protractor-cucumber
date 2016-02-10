@@ -13,7 +13,9 @@ var argv = require('yargs').argv;
 var configFile,
     baseTestDir,
     seleniumAddress,
-    configuration;
+    configuration,
+    outputDir,
+    featuresDir;
 
 module.exports = function(grunt) {
 
@@ -21,10 +23,7 @@ module.exports = function(grunt) {
     var rerunFlag = argv.rerun || argv.r,
         taskString;
 
-    configFile = grunt.config.data.protractor_cucumber.options.configFile,
-    baseTestDir = grunt.config.data.protractor_cucumber.options.baseTestDir,
-    seleniumAddress = grunt.config.data.protractor_cucumber.options.seleniumAddress,
-    configuration = require(process.cwd() + '/' + configFile);
+    setupConfig();
 
     suite = suite || '';
     feature = feature || '';
@@ -32,7 +31,11 @@ module.exports = function(grunt) {
     browser = browser || '';
     taskString = 'e2e-run:' + suite + ':' + feature + ':' + tags + ':' + browser;
 
-    grunt.task.run(taskString);
+    var flags = getFlagsForProtractor(suite, feature, tags, browser);
+
+    var done = this.async();
+    protractorRunner(flags, done);
+
     if (rerunFlag) {
       grunt.task.run('e2e-rerun:' + browser);
       // grunt.task.run('stitch-json-files');
@@ -40,16 +43,67 @@ module.exports = function(grunt) {
 
   });
 
+  grunt.registerTask('e2e-rerun', 'Rerun failed scenarios alone', function (browser) {
+    var rerunScenarios, taskString;
+    if (!configFile) {
+      setupConfig();
+    }
+    process.env['RERUN'] = true;
+    rerunScenarios = grunt.file.read(outputDir + '/rerun.txt', 'utf8');
+    if (rerunScenarios) {
+      rerunScenarios = rerunScenarios.trim().split('\n');
+      grunt.option('specs', rerunScenarios);
+      // taskString = 'e2e-run:' + (!!browser ? '::::' + browser : '');
+      var flags = getFlagsForProtractor();
+      console.log('flags', flags);
+      var done = this.async();
+      protractorRunner(flags, done);
+      // grunt.task.run(taskString);
+    }
+  });
+
+  grunt.registerTask('e2e-dry-run', 'dry-run:team | Invokes formatters without executing the steps.', function (team, file) {
+    process.env['DRY_RUN'] = true;
+    file = file || '';
+    grunt.task.run('e2e-run:' + team + ':' + file);
+    grunt.task.run('run:dry-run');
+  });
+
+
   grunt.registerTask('e2e-cleanup', 'Remove files from output folder', function () {
     if (grunt.file.exists('test/output')) {
       grunt.file.delete('test/output');
     }
   });
 
-  grunt.registerTask('e2e-run', function e2eRun (suite, feature, tags, browser) {
-    // check if its defined
-    var outputDir = configuration.config.report.output || 'test/output',
-        featuresDir = baseTestDir + '/features';
+  var protractorRunner = function (flags, done) {
+    console.log('protractorRunner');
+    var ptr = grunt.util.spawn({
+      cmd: 'node',
+      args: flags
+    }, function(error, result, code) {
+      if (error) {
+        grunt.file.write(outputDir + '/error.txt', error);
+      }
+      done();
+    });
+
+    ptr.stdout.pipe(process.stdout);
+    ptr.stderr.pipe(process.stderr);
+  };
+
+  var setupConfig = function () {
+    // check if all are defined
+    configFile = grunt.config.data.protractor_cucumber.options.configFile,
+    baseTestDir = grunt.config.data.protractor_cucumber.options.baseTestDir,
+    seleniumAddress = grunt.config.data.protractor_cucumber.options.seleniumAddress,
+    configuration = require(process.cwd() + '/' + configFile);
+    outputDir = configuration.config.report.output || 'test/output',
+    featuresDir = baseTestDir + '/features';
+  };
+
+
+  var getFlagsForProtractor = function (suite, feature, tags, browser) {
 
     if (!grunt.file.exists(outputDir)) {
       grunt.file.mkdir(outputDir);
@@ -103,20 +157,7 @@ module.exports = function(grunt) {
       flags.push('--cucumberOpts.no-colors');
     }
 
-    var done = this.async();
-    var ptr = grunt.util.spawn({
-      cmd: 'node',
-      args: flags
-    }, function(error, result, code) {
-      if (error) {
-        grunt.file.write(outputDir + '/error.txt', error);
-      }
-      done();
-    });
-
-    ptr.stdout.pipe(process.stdout);
-    ptr.stderr.pipe(process.stderr);
-
-  });
+    return flags;
+  };
 
 };
