@@ -19,7 +19,7 @@ var configFile,
 
 module.exports = function(grunt) {
 
-  grunt.registerTask('e2e', 'Grunt plugin in progress', function (suite, feature, tags, browser) {
+  grunt.registerTask('e2e', 'Run end to end test using protractor and cucumber framework.', function (suite, feature, tags, browser) {
     var rerunFlag = argv.rerun || argv.r,
         taskString;
 
@@ -38,12 +38,11 @@ module.exports = function(grunt) {
 
     if (rerunFlag) {
       grunt.task.run('e2e-rerun:' + browser);
-      // grunt.task.run('stitch-json-files');
     }
 
   });
 
-  grunt.registerTask('e2e-rerun', 'Rerun failed scenarios alone', function (browser) {
+  grunt.registerTask('e2e-rerun', 'Rerun failed scenarios alone.', function (browser) {
     var rerunScenarios, taskString;
     if (!configFile) {
       setupConfig();
@@ -53,28 +52,24 @@ module.exports = function(grunt) {
     if (rerunScenarios) {
       rerunScenarios = rerunScenarios.trim().split('\n');
       grunt.option('specs', rerunScenarios);
-      // taskString = 'e2e-run:' + (!!browser ? '::::' + browser : '');
-      var flags = getFlagsForProtractor();
-      console.log('flags', flags);
-      var done = this.async();
-      protractorRunner(flags, done);
-      // grunt.task.run(taskString);
+      var flags = getFlagsForProtractor(null, null, null, null, true);
+      this.async();
+      protractorRunner(flags, stitchJsonFiles);
     }
   });
 
-  grunt.registerTask('e2e-dry-run', 'dry-run:team | Invokes formatters without executing the steps.', function (team, file) {
+  grunt.registerTask('e2e-dry-run', 'dry-run:folder | Invokes formatters without executing the steps.', function (team, file) {
     process.env['DRY_RUN'] = true;
     file = file || '';
     grunt.task.run('e2e-run:' + team + ':' + file);
     grunt.task.run('run:dry-run');
   });
 
-
-  grunt.registerTask('e2e-cleanup', 'Remove files from output folder', function () {
-    if (grunt.file.exists('test/output')) {
-      grunt.file.delete('test/output');
-    }
-  });
+  // grunt.registerTask('e2e-cleanup', 'Remove files from output folder', function () {
+  //   if (grunt.file.exists('test/output')) {
+  //     grunt.file.delete('test/output');
+  //   }
+  // });
 
   var protractorRunner = function (flags, done) {
     var ptr = grunt.util.spawn({
@@ -101,7 +96,7 @@ module.exports = function(grunt) {
     featuresDir = baseTestDir + '/features';
   };
 
-  var getFlagsForProtractor = function (suite, feature, tags, browser) {
+  var getFlagsForProtractor = function (suite, feature, tags, browser, rerunMode) {
 
     if (!grunt.file.exists(outputDir)) {
       grunt.file.mkdir(outputDir);
@@ -121,10 +116,10 @@ module.exports = function(grunt) {
     if (argv.browserName) {
       grunt.option('capabilities.browserName', argv.browserName);
       grunt.option('seleniumAddress', seleniumAddress);
-    } else if (browser) {
+    } else {
       // try modifing the protractor config rather than using directConnect
       grunt.option('directConnect', true);
-      grunt.option('capabilities.browserName', browser);
+      grunt.option('capabilities.browserName', browser || 'chrome');
     }
 
     if (argv.seleniumAddress) {
@@ -134,7 +129,6 @@ module.exports = function(grunt) {
     if (argv.platform) {
      grunt.option('capabilities.platform', argv.platform);
     }
-
 
     _.forEach(argv, function(value, key) {
       if (key !== '_') {
@@ -153,7 +147,11 @@ module.exports = function(grunt) {
 
     if (configuration.config.report) {
       _.forEach(configuration.config.report.format, function (filename, formatType) {
-        flags.push('--cucumberOpts.format=' + formatType + ':' + outputDir + '/' + filename);
+        if (rerunMode && formatType === 'json') {
+          flags.push('--cucumberOpts.format=json:' + outputDir + '/rerun.json');
+        } else {
+          flags.push('--cucumberOpts.format=' + formatType + ':' + outputDir + '/' + filename);
+        }
       });
     }
 
@@ -163,6 +161,48 @@ module.exports = function(grunt) {
     }
 
     return flags;
+  };
+
+  var stitchJsonFiles = function () {
+    console.log('stitchJsonFiles');
+    var originalJson,
+        rerunJson,
+        originalElements,
+        rerunElements;
+
+    grunt.file.recurse(outputDir, function (abspath, rootdir, subdir, filename) {
+      if (abspath.match(/rerun\S+json/g)) {
+        rerunJson = grunt.file.readJSON(abspath);
+        grunt.file.delete(abspath);
+      } else if (abspath.match(/\S+.json/g)) {
+        originalJson = grunt.file.readJSON(abspath);
+        grunt.file.delete(abspath);
+      }
+    });
+
+    originalElements = _.flatten(_.map(originalJson, 'elements'));
+    rerunElements = _.flatten(_.map(rerunJson, 'elements'));
+
+    _.forEach(rerunElements, function (rerunElement) {
+      var match = _.find(originalElements, function (originalElement) {
+        return originalElement.id === rerunElement.id;
+      });
+      if (match) {
+        var index = _.indexOf(originalElements, match);
+        originalElements.splice(index, 1, rerunElement);
+      }
+    });
+
+    _.forEach(originalJson, function (feature) {
+      _.forEach(feature.elements, function (scenario) {
+        scenario.steps = _.find(originalElements, function (originalElement) {
+          return originalElement.id === scenario.id;
+        }).steps;
+      });
+    });
+
+    grunt.file.write(outputDir + '/' + configuration.config.report.format.json, JSON.stringify(originalJson, null, 2), {encoding: 'utf8'});
+
   };
 
 };
