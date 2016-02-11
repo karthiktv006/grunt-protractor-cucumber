@@ -19,7 +19,20 @@ var configFile,
 
 module.exports = function(grunt) {
 
-  grunt.registerTask('e2e', 'Run end to end test using protractor and cucumber framework.', function (suite, feature, tags, browser) {
+  // Grunt tasks
+  grunt.registerTask('e2e', 'Run end to end test using protractor and cucumber framework.', e2e);
+  grunt.registerTask('e2e-rerun', 'Rerun failed scenarios alone.', e2eRerun);
+  grunt.registerTask('e2e-dry-run', 'dry-run:folder | Invokes formatters without executing the steps.', e2eDryRun);
+
+  // grunt.registerTask('e2e-cleanup', 'Remove files from output folder', function () {
+  //   if (grunt.file.exists('test/output')) {
+  //     grunt.file.delete('test/output');
+  //   }
+  // });
+
+  //////////////////// Task functions
+
+  function e2e (suite, feature, tags, browser) {
     var rerunFlag = argv.rerun || argv.r,
         taskString;
 
@@ -39,10 +52,9 @@ module.exports = function(grunt) {
     if (rerunFlag) {
       grunt.task.run('e2e-rerun:' + browser);
     }
+  }
 
-  });
-
-  grunt.registerTask('e2e-rerun', 'Rerun failed scenarios alone.', function (browser) {
+  function e2eRerun (browser) {
     var rerunScenarios, taskString;
     if (!configFile) {
       setupConfig();
@@ -56,20 +68,16 @@ module.exports = function(grunt) {
       this.async();
       protractorRunner(flags, stitchJsonFiles);
     }
-  });
+  }
 
-  grunt.registerTask('e2e-dry-run', 'dry-run:folder | Invokes formatters without executing the steps.', function (team, file) {
+  function e2eDryRun (team, file) {
     process.env['DRY_RUN'] = true;
     file = file || '';
     grunt.task.run('e2e-run:' + team + ':' + file);
     grunt.task.run('run:dry-run');
-  });
+  }
 
-  // grunt.registerTask('e2e-cleanup', 'Remove files from output folder', function () {
-  //   if (grunt.file.exists('test/output')) {
-  //     grunt.file.delete('test/output');
-  //   }
-  // });
+  /////////////////// Private functions
 
   var protractorRunner = function (flags, done) {
     var ptr = grunt.util.spawn({
