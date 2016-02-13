@@ -24,12 +24,6 @@ module.exports = function(grunt) {
   grunt.registerTask('e2e-rerun', 'Rerun failed scenarios alone.', e2eRerun);
   grunt.registerTask('e2e-dry-run', 'dry-run:folder | Invokes formatters without executing the steps.', e2eDryRun);
 
-  // grunt.registerTask('e2e-cleanup', 'Remove files from output folder', function () {
-  //   if (grunt.file.exists('test/output')) {
-  //     grunt.file.delete('test/output');
-  //   }
-  // });
-
   //////////////////// Task functions
 
   function e2e (suite, feature, tags, browser) {
