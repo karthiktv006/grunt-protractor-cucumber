@@ -1,6 +1,6 @@
 'use strict';
 
-var grunt = require('grunt');
+// var grunt = require('grunt');
 
 /*
   ======== A Handy Little Nodeunit Reference ========
@@ -22,17 +22,18 @@ var grunt = require('grunt');
     test.ifError(value)
 */
 
-exports.protractor_cucumber = {
-  setUp: function(done) {
+/*eslint object-shorthand: 0*/
+exports.protractorCucumber = {
+  setUp: function (done) {
     // setup here if necessary
     done();
   },
-  default_options: function(test) {
+  defaultOptions: function (test) {
     test.ok('wip', 'work in progress');
     test.done();
   },
-  custom_options: function(test) {
+  customOptions: function (test) {
     test.ok('wip', 'work in progress');
     test.done();
-  },
+  }
 };
