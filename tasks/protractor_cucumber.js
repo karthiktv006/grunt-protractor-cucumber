@@ -8,10 +8,11 @@
 
 'use strict';
 
-var _ = require('lodash');
-var argv = require('yargs').argv;
-var path = require('path');
-var configFile,
+var _ = require('lodash'),
+    argv = require('yargs').argv,
+    path = require('path'),
+
+    configFile,
     baseTestDir,
     seleniumAddress,
     configuration,
@@ -30,7 +31,8 @@ module.exports = function(grunt) {
 
   function e2e (suite, feature, tags, browser) {
     var rerunFlag = argv.rerun || argv.r,
-        taskString;
+        taskString,
+        flags;
 
     setupConfig();
 
@@ -40,7 +42,7 @@ module.exports = function(grunt) {
     browser = browser || '';
     taskString = 'e2e-run:' + suite + ':' + feature + ':' + tags + ':' + browser;
 
-    var flags = getFlagsForProtractor(suite, feature, tags, browser);
+    flags = getFlagsForProtractor(suite, feature, tags, browser, {});
 
     var done = this.async();
     protractorRunner(flags, done);
@@ -51,27 +53,45 @@ module.exports = function(grunt) {
   }
 
   function e2eRerun (browser) {
-    var rerunScenarios, taskString;
+    var rerunScenarios,
+        mode = {
+          rerun: true
+        },
+        rerunReportFile = path.resolve(outputDir, reportFormat.rerun || 'rerun.txt'),
+        flags;
+
     if (!configFile) {
       setupConfig();
     }
-    process.env['RERUN'] = true;
-    var rerunReportFile = path.resolve(outputDir, reportFormat.rerun || 'rerun.txt');
+
     rerunScenarios = grunt.file.read(rerunReportFile, 'utf8');
+
     if (rerunScenarios) {
       rerunScenarios = rerunScenarios.trim().split('\n');
       grunt.option('specs', rerunScenarios);
-      var flags = getFlagsForProtractor(null, null, null, null, true);
+      flags = getFlagsForProtractor(null, null, null, null, mode);
       this.async();
       protractorRunner(flags, stitchJsonFiles);
     }
   }
 
   function e2eDryRun (team, file) {
+    var mode = {
+          dryrun: true
+        },
+        file = file || '',
+        flags;
+
     process.env['DRY_RUN'] = true;
-    file = file || '';
-    grunt.task.run('e2e-run:' + team + ':' + file);
-    grunt.task.run('run:dry-run');
+
+    if (!configFile) {
+      setupConfig();
+    }
+
+    flags = getFlagsForProtractor(team, file, null, null, mode);
+    var done = this.async();
+    protractorRunner(flags, done);
+    // grunt.task.run('run:dry-run');
   }
 
   /////////////////// Private functions
@@ -102,7 +122,7 @@ module.exports = function(grunt) {
     reportFormat = configuration.config.report.format;
   };
 
-  var getFlagsForProtractor = function (suite, feature, tags, browser, rerunMode) {
+  var getFlagsForProtractor = function (suite, feature, tags, browser, mode) {
 
     if (!grunt.file.exists(outputDir)) {
       grunt.file.mkdir(outputDir);
@@ -151,9 +171,13 @@ module.exports = function(grunt) {
       }
     }
 
-    if (reportFormat) {
+    if (mode.dryrun) {
+      var format = configuration.config.report.dryrunOutputFormat || 'progress';
+      flags.push('--cucumberOpts.format=' + format);
+      flags.push('--cucumberOpts.dry-run');
+    } else {
       _.forEach(reportFormat, function (filename, formatType) {
-        if (rerunMode && formatType === 'json') {
+        if (mode.rerun && formatType === 'json') {
           flags.push('--cucumberOpts.format=json:' + path.resolve(outputDir, 'rerun.json'));
         } else if (filename === 'console') {
           flags.push('--cucumberOpts.format=' + formatType);
