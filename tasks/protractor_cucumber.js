@@ -10,12 +10,14 @@
 
 var _ = require('lodash');
 var argv = require('yargs').argv;
+var path = require('path');
 var configFile,
     baseTestDir,
     seleniumAddress,
     configuration,
     outputDir,
-    featuresDir;
+    featuresDir,
+    reportFormat;
 
 module.exports = function(grunt) {
 
@@ -54,7 +56,8 @@ module.exports = function(grunt) {
       setupConfig();
     }
     process.env['RERUN'] = true;
-    rerunScenarios = grunt.file.read(outputDir + '/rerun.txt', 'utf8');
+    var rerunReportFile = path.resolve(outputDir, reportFormat.rerun || 'rerun.txt');
+    rerunScenarios = grunt.file.read(rerunReportFile, 'utf8');
     if (rerunScenarios) {
       rerunScenarios = rerunScenarios.trim().split('\n');
       grunt.option('specs', rerunScenarios);
@@ -79,7 +82,7 @@ module.exports = function(grunt) {
       args: flags
     }, function(error, result, code) {
       if (error) {
-        grunt.file.write(outputDir + '/error.txt', error);
+        grunt.file.write(path.resolve(outputDir, 'error.txt'), error);
       }
       done();
     });
@@ -90,12 +93,13 @@ module.exports = function(grunt) {
 
   var setupConfig = function () {
     // check if all are defined
-    configFile = grunt.config.data.protractor_cucumber.options.configFile,
-    baseTestDir = grunt.config.data.protractor_cucumber.options.baseTestDir,
-    seleniumAddress = grunt.config.data.protractor_cucumber.options.seleniumAddress,
-    configuration = require(process.cwd() + '/' + configFile);
-    outputDir = configuration.config.report.output || 'test/output',
-    featuresDir = baseTestDir + '/features';
+    configFile = path.resolve(grunt.config.data.protractor_cucumber.configFile),
+    baseTestDir = path.resolve(grunt.config.data.protractor_cucumber.baseTestDir),
+    seleniumAddress = grunt.config.data.protractor_cucumber.seleniumAddress,
+    configuration = require(configFile);
+    outputDir = configuration.config.report.output || path.resolve('test', 'output'),
+    featuresDir = path.resolve(baseTestDir,  'features');
+    reportFormat = configuration.config.report.format;
   };
 
   var getFlagsForProtractor = function (suite, feature, tags, browser, rerunMode) {
@@ -105,10 +109,10 @@ module.exports = function(grunt) {
     }
 
     if (suite) {
-      grunt.option('specs', featuresDir + suite + '/*.feature');
+      grunt.option('specs', path.resolve(featuresDir, suite, '**/*.feature'));
     }
     if (feature) {
-      grunt.option('specs', featuresDir + suite + '/' + feature);
+      grunt.option('specs', path.resolve(featuresDir, suite, '**/*', feature));
     }
     var tags;
     if (tags) {
@@ -147,12 +151,14 @@ module.exports = function(grunt) {
       }
     }
 
-    if (configuration.config.report) {
-      _.forEach(configuration.config.report.format, function (filename, formatType) {
+    if (reportFormat) {
+      _.forEach(reportFormat, function (filename, formatType) {
         if (rerunMode && formatType === 'json') {
-          flags.push('--cucumberOpts.format=json:' + outputDir + '/rerun.json');
+          flags.push('--cucumberOpts.format=json:' + path.resolve(outputDir, 'rerun.json'));
+        } else if (filename === 'console') {
+          flags.push('--cucumberOpts.format=' + formatType);
         } else {
-          flags.push('--cucumberOpts.format=' + formatType + ':' + outputDir + '/' + filename);
+          flags.push('--cucumberOpts.format=' + formatType + ':' + path.resolve(outputDir, filename));
         }
       });
     }
@@ -203,7 +209,7 @@ module.exports = function(grunt) {
       });
     });
 
-    grunt.file.write(outputDir + '/' + configuration.config.report.format.json, JSON.stringify(originalJson, null, 2), {encoding: 'utf8'});
+    grunt.file.write(path.resolve(outputDir, reportFormat.json), JSON.stringify(originalJson, null, 2), {encoding: 'utf8'});
 
   };
 
