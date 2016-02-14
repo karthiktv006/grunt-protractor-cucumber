@@ -27,10 +27,14 @@ module.exports = function(grunt) {
 				'*.js'
 
 			]
-		}
+		},
+ 	  // Unit tests.
+    nodeunit: {
+      tests: ['test/*_test.js']
+    }
 	});
 
 	grunt.registerTask('lint', ['eslint']);
-	grunt.registerTask('test', function () {});
+	grunt.registerTask('test', ['nodeunit']);
 
 };
