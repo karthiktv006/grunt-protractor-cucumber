@@ -16,7 +16,9 @@
     "yargs": "^3.32.0"
   },
   "devDependencies": {
-    "grunt": "~0.4.5"
+    "grunt": "^0.4.5",
+    "grunt-eslint": "^18.0.0",
+    "load-grunt-tasks": "^3.4.0"
   },
   "keywords": [
     "gruntplugin",

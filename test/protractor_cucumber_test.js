@@ -1,8 +1,8 @@
 'use strict';
 
+/*
 var grunt = require('grunt');
 
-/*
   ======== A Handy Little Nodeunit Reference ========
   https://github.com/caolan/nodeunit
 
@@ -20,7 +20,6 @@ var grunt = require('grunt');
     test.throws(block, [error], [message])
     test.doesNotThrow(block, [error], [message])
     test.ifError(value)
-*/
 
 exports.protractor_cucumber = {
   setUp: function(done) {
@@ -46,3 +45,4 @@ exports.protractor_cucumber = {
     test.done();
   },
 };
+*/

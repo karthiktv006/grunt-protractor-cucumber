@@ -31,7 +31,6 @@ module.exports = function(grunt) {
 
   function e2e (suite, feature, tags, browser) {
     var rerunFlag = argv.rerun || argv.r,
-        taskString,
         flags;
 
     setupConfig();
@@ -40,7 +39,6 @@ module.exports = function(grunt) {
     feature = feature || '';
     tags = tags || '';
     browser = browser || '';
-    taskString = 'e2e-run:' + suite + ':' + feature + ':' + tags + ':' + browser;
 
     flags = getFlagsForProtractor(suite, feature, tags, browser, {});
 
@@ -69,7 +67,7 @@ module.exports = function(grunt) {
     if (rerunScenarios) {
       rerunScenarios = rerunScenarios.trim().split('\n');
       grunt.option('specs', rerunScenarios);
-      flags = getFlagsForProtractor(null, null, null, null, mode);
+      flags = getFlagsForProtractor(null, null, null, browser, mode);
       this.async();
       protractorRunner(flags, stitchJsonFiles);
     }
@@ -79,7 +77,6 @@ module.exports = function(grunt) {
     var mode = {
           dryrun: true
         },
-        file = file || '',
         flags;
 
     process.env['DRY_RUN'] = true;
@@ -88,6 +85,7 @@ module.exports = function(grunt) {
       setupConfig();
     }
 
+    file = file || '';
     flags = getFlagsForProtractor(team, file, null, null, mode);
     var done = this.async();
     protractorRunner(flags, done);
@@ -100,7 +98,7 @@ module.exports = function(grunt) {
     var ptr = grunt.util.spawn({
       cmd: 'node',
       args: flags
-    }, function(error, result, code) {
+    }, function(error) {
       if (error) {
         grunt.file.write(path.resolve(outputDir, 'error.txt'), error);
       }
@@ -134,7 +132,6 @@ module.exports = function(grunt) {
     if (feature) {
       grunt.option('specs', path.resolve(featuresDir, suite, '**/*', feature));
     }
-    var tags;
     if (tags) {
       tags = tags.split('&&');
     }
@@ -196,13 +193,12 @@ module.exports = function(grunt) {
   };
 
   var stitchJsonFiles = function () {
-    console.log('stitchJsonFiles');
     var originalJson,
         rerunJson,
         originalElements,
         rerunElements;
 
-    grunt.file.recurse(outputDir, function (abspath, rootdir, subdir, filename) {
+    grunt.file.recurse(outputDir, function (abspath) {
       if (abspath.match(/rerun\S+json/g)) {
         rerunJson = grunt.file.readJSON(abspath);
         grunt.file.delete(abspath);

@@ -10,6 +10,26 @@
 
 module.exports = function(grunt) {
 
-  grunt.loadTasks('tasks');
+	require('load-grunt-tasks')(grunt);
+
+	grunt.loadTasks('tasks');
+
+	grunt.initConfig({
+		eslint: {
+			options: {
+				configFile: '.eslintrc.js',
+				format: 'table'
+			},
+			target: [
+
+				'tasks/**/*.js',
+				'test/**/*.js',
+				'*.js'
+
+			]
+		}
+	});
+
+	grunt.registerTask('lint', ['eslint']);
 
 };
