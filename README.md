@@ -1,4 +1,4 @@
-# grunt-protractor-cucumber
+# grunt-protractor-cucumber [![Build Status](https://travis-ci.org/karthiktv006/grunt-protractor-cucumber.svg?branch=master)](https://travis-ci.org/karthiktv006/grunt-protractor-cucumber)
 
 > Grunt runner for protractor using cucumber framework
 
