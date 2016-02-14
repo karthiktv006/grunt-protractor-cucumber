@@ -7,8 +7,7 @@
     "node": ">= 0.8.0"
   },
   "scripts": {
-    "prepublish": "grunt lint",
-    "test": "grunt test"
+    "prepublish": "grunt lint"
   },
   "dependencies": {
     "cucumber": "v0.9.4",
