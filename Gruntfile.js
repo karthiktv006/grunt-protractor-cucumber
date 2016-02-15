@@ -14,26 +14,6 @@ module.exports = function(grunt) {
 
 	grunt.loadTasks('tasks');
 
-	grunt.initConfig({
-		eslint: {
-			options: {
-				configFile: '.eslintrc.js',
-				format: 'table'
-			},
-			target: [
-
-				'tasks/**/*.js',
-				'test/**/*.js',
-				'*.js'
-
-			]
-		},
-		// Unit tests.
-		nodeunit: {
-			tests: ['test/*_test.js']
-		}
-	});
-
 	grunt.registerTask('lint', ['eslint']);
 	grunt.registerTask('test', ['nodeunit']);
 

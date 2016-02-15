@@ -111,9 +111,9 @@ module.exports = function(grunt) {
 
   var setupConfig = function () {
     // check if all are defined
-    configFile = path.resolve(grunt.config.data.protractor_cucumber.configFile),
-    baseTestDir = path.resolve(grunt.config.data.protractor_cucumber.baseTestDir),
-    seleniumAddress = grunt.config.data.protractor_cucumber.seleniumAddress,
+    configFile = path.resolve(grunt.config.data.protractorCucumber.configFile),
+    baseTestDir = path.resolve(grunt.config.data.protractorCucumber.baseTestDir),
+    seleniumAddress = grunt.config.data.protractorCucumber.seleniumAddress,
     configuration = require(configFile);
     outputDir = configuration.config.report.output || path.resolve('test', 'output'),
     featuresDir = path.resolve(baseTestDir,  'features');
