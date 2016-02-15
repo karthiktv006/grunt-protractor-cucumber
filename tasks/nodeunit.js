@@ -3,7 +3,7 @@
 module.exports = function (grunt) {
 
 	grunt.config('nodeunit', {
-			tests: ['spec/*_spec.js']
+			tests: ['spec/*-spec.js']
 	});
 
 };
