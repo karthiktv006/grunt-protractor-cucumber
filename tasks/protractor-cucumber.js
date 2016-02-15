@@ -130,7 +130,7 @@ module.exports = function(grunt) {
       grunt.option('specs', path.resolve(featuresDir, suite, '**/*.feature'));
     }
     if (feature) {
-      grunt.option('specs', path.resolve(featuresDir, suite, '**/*', feature));
+      grunt.option('specs', path.resolve(featuresDir, suite, feature));
     }
     if (tags) {
       tags = tags.split('&&');
