@@ -10,7 +10,7 @@ module.exports = function (grunt) {
 		target: [
 
 			'tasks/**/*.js',
-			'test/**/*.js',
+			'spec/**/*.js',
 			'*.js'
 
 		]

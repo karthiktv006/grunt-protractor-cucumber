@@ -10,11 +10,11 @@
 
 module.exports = function(grunt) {
 
-	require('load-grunt-tasks')(grunt);
+  require('load-grunt-tasks')(grunt);
 
-	grunt.loadTasks('tasks');
+  grunt.loadTasks('tasks');
 
-	grunt.registerTask('lint', ['eslint']);
-	grunt.registerTask('test', ['nodeunit']);
+  grunt.registerTask('lint', ['eslint']);
+  grunt.registerTask('test', ['nodeunit']);
 
 };
