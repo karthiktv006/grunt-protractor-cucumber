@@ -87,9 +87,8 @@ module.exports = function(grunt) {
 
     file = file || '';
     flags = getFlagsForProtractor(team, file, null, null, mode);
-    var done = this.async();
-    protractorRunner(flags, done);
-    // grunt.task.run('run:dry-run');
+    this.async();
+    protractorRunner(flags, generateDryrunHTMLReport);
   }
 
   /////////////////// Private functions
@@ -170,6 +169,7 @@ module.exports = function(grunt) {
 
     if (mode.dryrun) {
       var format = configuration.config.report.dryrunOutputFormat || 'progress';
+      flags.push('--cucumberOpts.format=json:' + path.resolve(outputDir, 'dryrun.json'));
       flags.push('--cucumberOpts.format=' + format);
       flags.push('--cucumberOpts.dry-run');
     } else {
@@ -231,6 +231,14 @@ module.exports = function(grunt) {
 
     grunt.file.write(path.resolve(outputDir, reportFormat.json), JSON.stringify(originalJson, null, 2), {encoding: 'utf8'});
 
+  };
+
+  var generateDryrunHTMLReport = function () {
+    var template = grunt.file.read(path.resolve('node_modules', 'grunt-protractor-cucumber', 'tasks', 'template', 'dryrunReportTemplate.html'), 'utf8');
+    var jsonReport = grunt.file.read(path.resolve(outputDir, 'dryrun.json'), 'utf8');
+    var reportFinal = template.replace('// JSON-GOES-HERE', jsonReport);
+    grunt.file.write(path.resolve(outputDir, 'reportFinal.html'), reportFinal);
+    grunt.file.delete(path.resolve(outputDir, 'dryrun.json'));
   };
 
 };

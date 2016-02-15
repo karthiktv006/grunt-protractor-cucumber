@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Dry Run Report</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.6.0/lodash.min.js"></script>
+  <style>
+    .headerRow {
+      border:1px solid;
+      padding: 6px 10px;
+      font-size: large;
+      background-color: #3399FF;
+    }
+
+    .headerCell {
+     border:1px solid;
+     padding: 0px 20px 0px 20px !important;
+   }
+
+   .tableCell {
+    border:1px solid;
+    font-size: large;
+    padding: 0px 20px 0px 20px !important;
+  }
+</style>
+<script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+</head>
+<body>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12 col-md-offset-1">
+        <div id="piechart" style="width: 1000px; height: 500px;"></div>
+      </div>
+      <div class="col-md-12 col-md-offset-2">
+        <div id="tablechart"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    var data =
+    // JSON-GOES-HERE
+  </script>
+
+  <script>
+
+    google.load("visualization", "1", {packages:["corechart"]});
+    google.load("visualization", "1", {packages:["table"]});
+    google.setOnLoadCallback(drawChart);
+
+    function drawChart() {
+      var totalScenarios = scenarios.length;
+      var manualScenarios = countByTag('@manual');
+      var wipScenarios = countByTag('@wip');
+      var dataSetupScenarios = countByTag('@data_setup_needed');
+      var automatedScenarios = scenarios.length - manualScenarios - wipScenarios - dataSetupScenarios;
+      var pieArray = [
+        ['Type',    'Count'],
+        ['Automated'+': '+String(automatedScenarios)+'/'+String(totalScenarios),  automatedScenarios],
+        ['manual'+': '+String(manualScenarios)+'/'+String(totalScenarios),  manualScenarios],
+        ['wip'+': '+String(wipScenarios)+'/'+String(totalScenarios),     wipScenarios],
+        ['data setup needed'+': '+String(dataSetupScenarios)+'/'+String(totalScenarios),     dataSetupScenarios],
+        ];
+
+      var tableArray = [
+        ['Types',    'Scenario Count','Percentage'],
+        ['Automated',  automatedScenarios,automatedScenarios/totalScenarios*100],
+        ['Manual',  manualScenarios,manualScenarios/totalScenarios*100],
+        ['Work in progress',     wipScenarios,wipScenarios/totalScenarios*100],
+        ['Data setup needed',     dataSetupScenarios,dataSetupScenarios/totalScenarios*100],
+        ['Total',     totalScenarios,100]
+        ];
+
+      var pieData = google.visualization.arrayToDataTable(pieArray);
+      var tableData = google.visualization.arrayToDataTable(tableArray);
+      var formatter = new google.visualization.NumberFormat({suffix: '%'});
+      formatter.format(tableData, 2);
+
+      var options = {
+        title: 'Scenario Breakdown Report',
+        titleTextStyle: {
+          fontSize: 16
+        },
+        legend: {
+          alignment: 'center',
+          position: 'labeled',
+          textStyle: {
+            fontSize: 16
+          }
+        },
+        tooltip: {
+          text: 'percentage',
+        },
+        pieStartAngle: 120
+      };
+
+      // draw pie chart
+      var piechart = new google.visualization.PieChart(document.getElementById('piechart'));
+      piechart.draw(pieData, options);
+
+      var cssClassNames = {
+        tableCell: 'tableCell',
+        headerRow: 'headerRow',
+        headerCell: 'headerCell',
+        tableRow: 'tableRow'
+      };
+
+      // draw table chart
+      var tablechart = new google.visualization.Table(document.getElementById('tablechart'));
+      tablechart.draw(tableData, {height: '200px',width: '800px', showRowNumber: false,cssClassNames:cssClassNames});
+
+    }
+
+    var scenarios = _.flatten(_.pluck(data, 'elements'));
+    function countByTag(tagname) {
+      return _.filter(scenarios, function(scenario) {
+        var names = _.pluck(scenario.tags, 'name');
+        return names.indexOf(tagname) > -1;
+      }).length;
+    }
+
+
+  </script>
+</body>
+</html>
