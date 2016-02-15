@@ -51,16 +51,16 @@ module.exports = function(grunt) {
   }
 
   function e2eRerun (browser) {
+    if (!configFile) {
+      setupConfig();
+    }
+
     var rerunScenarios,
         mode = {
           rerun: true
         },
         rerunReportFile = path.resolve(outputDir, reportFormat.rerun || 'rerun.txt'),
         flags;
-
-    if (!configFile) {
-      setupConfig();
-    }
 
     rerunScenarios = grunt.file.read(rerunReportFile, 'utf8');
 
