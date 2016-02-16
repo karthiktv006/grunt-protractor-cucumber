@@ -160,7 +160,7 @@ module.exports = function(grunt) {
 
     var flags = grunt.option.flags();
     flags.unshift(configFile);
-    flags.unshift('node_modules/protractor/bin/protractor');
+    flags.unshift(path.resolve(__dirname, '..', 'node_modules/protractor/bin/protractor'));
     if (tags) {
       for (var j = 0; j < tags.length; j++) {
         flags.push('--cucumberOpts.tags=' + tags[j]);
