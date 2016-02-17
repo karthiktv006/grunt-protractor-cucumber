@@ -18,6 +18,7 @@ var _ = require('lodash'),
     configuration,
     outputDir,
     featuresDir,
+    protractorDir,
     reportFormat;
 
 module.exports = function(grunt) {
@@ -160,7 +161,7 @@ module.exports = function(grunt) {
 
     var flags = grunt.option.flags();
     flags.unshift(configFile);
-    flags.unshift(require.resolve('protractor'));
+    flags.unshift(path.resolve(getProtractorDir(), 'protractor'));
     if (tags) {
       for (var j = 0; j < tags.length; j++) {
         flags.push('--cucumberOpts.tags=' + tags[j]);
@@ -239,6 +240,18 @@ module.exports = function(grunt) {
     var reportFinal = template.replace('// JSON-GOES-HERE', jsonReport);
     grunt.file.write(path.resolve(outputDir, 'reportFinal.html'), reportFinal);
     grunt.file.delete(path.resolve(outputDir, 'dryrun.json'));
+  };
+
+  var getProtractorDir = function () {
+    if (protractorDir) {
+      return protractorDir;
+    }
+    var result = require.resolve('protractor');
+    if (result) {
+      protractorDir = path.resolve(path.join(path.dirname(result), '..', '..', '.bin'));
+      return protractorDir;
+    }
+    throw new Error('No protractor installation found.');
   };
 
 };
