@@ -1,6 +1,37 @@
 // 'use strict';
 
 // module.exports = function (grunt) {
+
+// 	grunt.registerTask('run', function (command) {
+// 		var flags;
+
+// 		switch (command) {
+// 			case 'update-selenium':
+// 				flags = path.resolve(__dirname, '..', 'node_modules/protractor/bin/protractor')
+
+// 			case 'update-selenium-ie':
+
+// 			case 'start-selenium':
+
+// 			case 'update-start-selenium':
+
+// 			default:
+// 				grunt.log.warn('hello');
+// 		}
+// 	});
+
+// 	var nodeCommandRunner = function (flags, done) {
+//     var runner = grunt.util.spawn({
+//       cmd: 'node',
+//       args: flags
+//     }, function() {
+//       done();
+//     });
+
+//     runner.stdout.pipe(process.stdout);
+//     runner.stderr.pipe(process.stderr);
+// 	};
+
 //   grunt.config('run', {
 //     'update-selenium': {
 //       cmd: 'node',
