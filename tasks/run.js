@@ -1,82 +1,69 @@
-// 'use strict';
+'use strict';
 
-// module.exports = function (grunt) {
+var path = require('path');
+var webdriverManager;
 
-// 	grunt.registerTask('run', function (command) {
-// 		var flags;
+module.exports = function (grunt) {
 
-// 		switch (command) {
-// 			case 'update-selenium':
-// 				flags = path.resolve(__dirname, '..', 'node_modules/protractor/bin/protractor')
+	grunt.registerTask('run', function (command) {
+		var done = this.async();
 
-// 			case 'update-selenium-ie':
+		switch (command) {
+			case 'update-selenium':
+				updateSelenium(done);
+				break;
 
-// 			case 'start-selenium':
+			case 'update-selenium-ie':
+				updateSeleniumIe(done);
+				break;
 
-// 			case 'update-start-selenium':
+			case 'start-selenium':
+				startSelenium(done);
+				break;
 
-// 			default:
-// 				grunt.log.warn('hello');
-// 		}
-// 	});
+			case 'update-start-selenium':
+				updateSelenium(startSelenium);
+				break;
 
-// 	var nodeCommandRunner = function (flags, done) {
-//     var runner = grunt.util.spawn({
-//       cmd: 'node',
-//       args: flags
-//     }, function() {
-//       done();
-//     });
+			default:
+				grunt.log.warn('hello');
+		}
+	});
 
-//     runner.stdout.pipe(process.stdout);
-//     runner.stderr.pipe(process.stderr);
-// 	};
+	var updateSelenium = function (done) {
+		nodeCommandRunner([getWebdriverManager(), 'update', '--ignore_ssl'], done);
+	};
 
-//   grunt.config('run', {
-//     'update-selenium': {
-//       cmd: 'node',
-//       args: [
-//         'node_modules/protractor/bin/webdriver-manager',
-//         'update',
-//         '--ignore_ssl'
-//       ],
-//       options: {
-//         passArgs: [
-//           'proxy'
-//         ]
-//       }
-//     },
-//     'update-selenium-ie': {
-//       cmd: 'node',
-//       args: [
-//         'node_modules/protractor/bin/webdriver-manager',
-//         'update',
-//         '--ie',
-//         '--ignore_ssl'
-//       ],
-//       options: {
-//         passArgs: [
-//           'proxy'
-//         ]
-//       }
-//     },
-//     'start-selenium': {
-//       cmd: 'node',
-//       options: {
-//         wait: true
-//       },
-//       args: [
-//         'node_modules/protractor/bin/webdriver-manager',
-//         'start'
-//       ]
-//     },
-//     'start-cucumber-sandwich': {
-//       exec: 'java -jar cucumber-sandwich.jar -f test/e2e/output/ -o test/e2e/report/'
-//     },
+	var startSelenium = function (done) {
+		nodeCommandRunner([getWebdriverManager(), 'start'], done);
+	};
 
-//     'update-start-selenium': {
-//       exec: 'node node_modules/protractor/bin/webdriver-manager update --ignore_ssl' +
-//         '&& node node_modules/protractor/bin/webdriver-manager start'
-//     }
-//   });
-// };
+	var updateSeleniumIe = function (done) {
+		nodeCommandRunner([getWebdriverManager(), 'update', '--ie','--ignore_ssl'], done);
+	};
+
+	var nodeCommandRunner = function (flags, done) {
+    var runner = grunt.util.spawn({
+      cmd: 'node',
+      args: flags
+    }, function() {
+      done();
+    });
+
+    runner.stdout.pipe(process.stdout);
+    runner.stderr.pipe(process.stderr);
+	};
+
+  var getWebdriverManager = function () {
+    if (webdriverManager) {
+      return webdriverManager;
+    }
+    var result = require.resolve('protractor');
+    if (result) {
+      webdriverManager = path.resolve(path.join(path.dirname(result), '..', '..', '.bin', 'webdriver-manager'));
+      return webdriverManager;
+    }
+    throw new Error('No protractor installation found.');
+  };
+
+};
