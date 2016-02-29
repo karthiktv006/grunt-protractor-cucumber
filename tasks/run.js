@@ -39,7 +39,7 @@ module.exports = function (grunt) {
 	};
 
 	var updateSeleniumIe = function (done) {
-		nodeCommandRunner([getWebdriverManager(), 'update', '--ie','--ignore_ssl'], done);
+		nodeCommandRunner([getWebdriverManager(), 'update', '--ie', '--ignore_ssl'], done);
 	};
 
 	var nodeCommandRunner = function (flags, done) {
