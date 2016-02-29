@@ -122,6 +122,21 @@ module.exports = function(grunt) {
 
   var getFlagsForProtractor = function (suite, feature, tags, browser, mode) {
 
+    // temp folder deletion
+    if (grunt.file.exists('test/e2e/report')) {
+      grunt.file.delete('test/e2e/report');
+    }
+
+    if (grunt.file.exists('test/e2e/report_html')) {
+      grunt.file.delete('test/e2e/report_html');
+    }
+
+    if (grunt.file.exists('test/e2e/output_bak')) {
+      grunt.file.delete('test/e2e/output_bak');
+    }
+
+    //end of temp
+
     if (!grunt.file.exists(outputDir)) {
       grunt.file.mkdir(outputDir);
     }
