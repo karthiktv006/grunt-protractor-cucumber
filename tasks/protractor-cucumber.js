@@ -263,7 +263,7 @@ module.exports = function(grunt) {
     }
     var result = require.resolve('protractor');
     if (result) {
-      protractorDir = path.resolve(path.join(path.dirname(result), '..', '..', '.bin'));
+      protractorDir = path.resolve(path.join(path.dirname(result), '..', 'bin'));
       return protractorDir;
     }
     throw new Error('No protractor installation found.');

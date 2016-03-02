@@ -60,7 +60,7 @@ module.exports = function (grunt) {
     }
     var result = require.resolve('protractor');
     if (result) {
-      webdriverManager = path.resolve(path.join(path.dirname(result), '..', '..', '.bin', 'webdriver-manager'));
+      webdriverManager = path.resolve(path.join(path.dirname(result), '..', 'bin', 'webdriver-manager'));
       return webdriverManager;
     }
     throw new Error('No protractor installation found.');
