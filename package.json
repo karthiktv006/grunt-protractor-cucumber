@@ -5,7 +5,8 @@
   "author": "Karthik Viswanath <karthiktv006@gmail.com>",
   "contributors": [
     "Karthik Viswanath <karthiktv006@gmail.com>",
-    "Yousuf Bhuiyan <yousuf.bhuiyan216@gmail.com>"
+    "Yousuf Bhuiyan <yousuf.bhuiyan216@gmail.com>",
+    "Giuseppe DiBella <giuseppe.dibella-contractor@adp.com>"
   ],
   "engines": {
     "node": ">= 0.8.0"
