@@ -4,7 +4,8 @@
   "homepage": "https://github.com/karthiktv006/grunt-protractor-cucumber#readme",
   "author": "Karthik Viswanath <karthiktv006@gmail.com>",
   "contributors": [
-    "Karthik Viswanath <karthiktv006@gmail.com>"
+    "Karthik Viswanath <karthiktv006@gmail.com>",
+    "Yousuf Bhuiyan <yousuf.bhuiyan216@gmail.com>"
   ],
   "engines": {
     "node": ">= 0.8.0"
