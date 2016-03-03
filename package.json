@@ -3,6 +3,9 @@
   "description": "Grunt runner for protractor using cucumber framework",
   "homepage": "https://github.com/karthiktv006/grunt-protractor-cucumber#readme",
   "author": "Karthik Viswanath <karthiktv006@gmail.com>",
+  "contributors": [
+    "Karthik Viswanath <karthiktv006@gmail.com>"
+  ],
   "engines": {
     "node": ">= 0.8.0"
   },
