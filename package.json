@@ -17,7 +17,7 @@
     "test": "grunt test"
   },
   "dependencies": {
-    "cucumber": "v0.9.4",
+    "cucumber": "v0.9.5",
     "lodash": "^4.3.0",
     "protractor": "git+http://bitbucket.es.ad.adp.com/scm/bn/protractor.git#redbox/v2.5.1",
     "yargs": "^3.32.0"
